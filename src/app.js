@@ -22,4 +22,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/accounts', accountRoutes);
 app.use('/api/transactions', transactionRoutes);
 
+// dummy api
+app.get("/",(req,res)=>{
+    res.send("Ledger service is up and running.")
+})
+
 module.exports = app;
