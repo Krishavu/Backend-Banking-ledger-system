@@ -1,7 +1,14 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const cors = require('cors'); // 1. Require CORS
 
 const app = express();
+
+// 2. Configure CORS before your routes
+app.use(cors({
+    origin: 'http://127.0.0.1:5500', // Standard port for VS Code Live Server
+    credentials: true // Crucial for sending JWT cookies!
+}));
 
 app.use(express.json());
 app.use(cookieParser());    
@@ -13,8 +20,6 @@ const authRoutes = require('./routes/auth.routes');
 const accountRoutes = require('./routes/account.routes');
 const transactionRoutes = require('./routes/transaction.routes');
 
-
-
 /**
  * - API Routes
  */
@@ -23,8 +28,8 @@ app.use('/api/accounts', accountRoutes);
 app.use('/api/transactions', transactionRoutes);
 
 // dummy api
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
     res.send("Ledger service is up and running.")
-})
+});
 
 module.exports = app;
