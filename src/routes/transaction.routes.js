@@ -20,4 +20,11 @@ transactionRoutes.post("/", authMiddleware.authMiddleware, transactionController
 
 transactionRoutes.post("/system/initial-funds",authMiddleware.authSystemUserMiddleware, transactionController.createInitialFundsTransaction)
 
+/**
+ * - GET /api/transactions/history
+ * - Get transaction history for the logged-in user
+ */
+
+transactionRoutes.get('/history', authMiddleware.authMiddleware, transactionController.getTransactionHistoryController);
+
 module.exports = transactionRoutes;

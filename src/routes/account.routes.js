@@ -26,4 +26,14 @@ router.get("/", authMiddleware.authMiddleware, accountController.getUserAccounts
 
 router.get("/balance/:accountId", authMiddleware.authMiddleware, accountController.getAccountBalanceController)
 
+
+
+/**
+ * -POST /api/accounts/lookup
+ * -Lookup account by email
+ * -Protected route
+ */
+router.post('/lookup', authMiddleware.authMiddleware, accountController.lookupAccountByEmailController);
+
+
 module.exports = router;

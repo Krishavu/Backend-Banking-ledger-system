@@ -236,7 +236,46 @@ async function createInitialFundsTransaction(req, res) {
 
 }
 
+async function getTransactionHistoryController(req, res) {
+    try {
+        // 1. Find all accounts owned by the logged-in user
+        const myAccounts = await accountModel.find({ user: req.user._id }).select('_id');
+        const myAccountIds = myAccounts.map(acc => acc._id);
+
+        if (myAccountIds.length === 0) {
+            return res.status(200).json({ transactions: [], myAccountIds: [] });
+        }
+
+        // 2. Find all transactions where the user is EITHER the sender OR the receiver
+        const transactions = await transactionModel.find({
+            $or: [
+                { fromAccount: { $in: myAccountIds } },
+                { toAccount: { $in: myAccountIds } }
+            ]
+        })
+        .populate({ 
+            path: 'fromAccount', 
+            populate: { path: 'user', select: 'name email systemUser' } 
+        })
+        .populate({ 
+            path: 'toAccount', 
+            populate: { path: 'user', select: 'name email systemUser' } 
+        })
+        .sort({ createdAt: -1 }); // Sort by newest first!
+
+        return res.status(200).json({ 
+            transactions, 
+            myAccountIds 
+        });
+
+    } catch (error) {
+        console.error("[History Error]:", error);
+        return res.status(500).json({ message: "Failed to fetch transaction history." });
+    }
+}
+
 module.exports = {
     createTransaction,
-    createInitialFundsTransaction
+    createInitialFundsTransaction,
+    getTransactionHistoryController
 }
