@@ -5,9 +5,17 @@ const cors = require('cors'); // 1. Require CORS
 const app = express();
 
 // 2. Configure CORS before your routes
+// The VIP Guest List for your backend
+const allowedOrigins = [
+  'http://127.0.0.1:5500', 
+  'http://localhost:5500',
+  'https://bank-ledger-frontend-three.vercel.app' // Your Vercel domain
+];
+
 app.use(cors({
-    origin: 'http://127.0.0.1:5500', // Standard port for VS Code Live Server
-    credentials: true // Crucial for sending JWT cookies!
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
 
 app.use(express.json());
