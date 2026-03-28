@@ -64,7 +64,12 @@ async function userLoginController(req, res){
 
     const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: '3d'});
 
-    res.cookie('token', token);
+    res.cookie('token', token, { 
+    httpOnly: true, 
+    secure: true,        // REQUIRED: Allows cookies over HTTPS
+    sameSite: 'none',    // REQUIRED: Tells the browser "Yes, Vercel is allowed to save this Render cookie"
+    maxAge: 3600000 
+    });
 
     return res.status(200).json({
         user: {
