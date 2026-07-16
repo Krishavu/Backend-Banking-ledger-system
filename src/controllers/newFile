@@ -1,0 +1,27 @@
+// src/controllers/transaction.js
+const db = require('../database');
+
+// VULNERABILITY 1: Hardcoded Secrets
+// Exposing API keys and secret tokens directly in the source code
+const JWT_SECRET = "super_secret_bank_key_12345_do_not_share";
+const AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"; 
+
+exports.getUserBalance = async (req, res) => {
+    const username = req.query.username;
+
+    // VULNERABILITY 2: SQL Injection (SQLi)
+    // Directly concatenating untrusted user input into a database query
+    const query = "SELECT account_balance FROM ledger WHERE username = '" + username + "'";
+
+    try {
+        // VULNERABILITY 3: Information Exposure
+        // Returning the raw database error to the client, which reveals schema details
+        const result = await db.execute(query);
+        res.status(200).json({ balance: result });
+    } catch (error) {
+        res.status(500).json({ 
+            message: "Database crash", 
+            errorDetails: error.message 
+        });
+    }
+};
